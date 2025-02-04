@@ -15,8 +15,8 @@ jobs:
 
     strategy:
       matrix:
-        toolchain: [stable, beta]
-        app: [hello-rust]
+        app: [ hello-rust ]
+        rust-toolchain: [ stable, beta ]
 
     runs-on: ubuntu-latest
 
@@ -26,11 +26,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-      with:
-        toolchain: ${{ matrix.toolchain }}
-        components: rustfmt
-    - name: Check
+    - name: Rust version override
+      run: rustup override set ${{ matrix.rust-toolchain }}
+    - name: Rust version check
+      run: rustup --version
+    - name: Rust components
+      run: rustup component add rustfmt
+    - name: Cargo Check
       run: cargo check --verbose
-    - name: Run tests
+    - name: Cargo Test
       run: cargo test --verbose
