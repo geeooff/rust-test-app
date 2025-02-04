@@ -10,12 +10,26 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+
   build:
+
+    strategy:
+      matrix:
+        toolchain: [stable, beta]
+        app: [hello-rust]
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: src/${{ matrix.app }}
+
     steps:
     - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        components: rustfmt
     - name: Check
       run: cargo check --verbose
     - name: Run tests
